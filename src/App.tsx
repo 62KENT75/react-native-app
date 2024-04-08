@@ -5,90 +5,48 @@
  * @format
  */
 
-import TitleComponent from "components/TitleComponent"
-import React from "react"
-import type { PropsWithChildren } from "react"
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native"
+import React, { useState } from "react"
+import HeaderComponent from "components/HeaderComponent"
+import ListComponent from "components/ListComponent"
+import FormComponent from "components/FormComponent"
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from "react-native/Libraries/NewAppScreen"
+import { FlatList, StyleSheet, View, Text } from "react-native"
 
-type SectionProps = PropsWithChildren<{
-  title: string
-}>
+function App(): React.JSX.Element {
+  const [listItems, setListItems] = useState([
+    { text: "Купить молоко", key: "1" },
+    { text: "Убраться в доме", key: "2" },
+    { text: "Сделать дз", key: "3" },
+  ])
 
-function Section({ children, title }: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === "dark"
+  const addHandler = (text) => {
+    setListItems((list) => {
+      return [{ text, key: Math.random().toString(36).substring(7) }, ...list]
+    })
+  }
+
+  const deleteHandler = (key) => {
+    setListItems((list) => {
+      return list.filter((listItems) => listItems.key != key)
+    })
+  }
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}
-      >
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}
-      >
-        {children}
-      </Text>
+    <View>
+      <HeaderComponent />
+      <FormComponent addHandler={addHandler} />
+      <View>
+        <FlatList
+          data={listItems}
+          renderItem={({ item }) => (
+            <ListComponent item={item} deleteHandler={deleteHandler} />
+          )}
+        />
+      </View>
     </View>
   )
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === "dark"
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  }
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <TitleComponent title="Hello" descr="Information about page" />
-    </SafeAreaView>
-  )
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: "400",
-  },
-  highlight: {
-    fontWeight: "700",
-  },
-})
+const styles = StyleSheet.create({})
 
 export default App
